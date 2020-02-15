@@ -25,6 +25,17 @@ volatile long millisDiff = 0; // sem budeme ukladat rozdil casu mezi pulsy nez r
 float TachoSpeed = 0;
 
 
+//GPS
+#include <NMEAGPS.h>
+#include <GPSport.h>
+
+//BACHA na prehozeni barev !!! Cervena je zem a cerna je 5V
+//rxd na gps - 9
+//txd na gps - 8 (piny jsou definovány v knihovně)
+
+NMEAGPS  gps; // This parses the GPS characters
+gps_fix  fix; // This holds on to the latest values
+
 
 // setup and calculate offset
 void setup() {
@@ -44,6 +55,9 @@ void setup() {
 //tachometr:
   pinMode(interruptPin, INPUT_PULLUP); // dokud neni tlacitko zmacknute bude pin ve stavu HIGH viz https://arduino.cz/arduino-zaklady-funkce-input_pullup/
   attachInterrupt(digitalPinToInterrupt(interruptPin), UpdatePulseTime, FALLING); // nastavime preruseni na pin 3, bude reagovat na klesajici napeti a bude volat funkci UpdatePulseTime
+
+//GPS
+  gpsPort.begin(9600);
 }
 
 
@@ -79,19 +93,35 @@ void loop() {
   else TachoSpeed = 3000/(float)pulseTime;
   Serial.println(TachoSpeed);
 
+//GPS
+  while (gps.available(gpsPort)) {
+    fix = gps.read();
+
+   Serial.print(F("SPEED: "));
+    if (fix.valid.speed)
+      Serial.println(fix.speed_kph());
+}
+
   
-//display  
+//display print
   oled_display.clear();
   oled_display.setCursor(0,0);
   oled_display.print("Air: ");
   oled_display.print(veloc);
   oled_display.setCursor(10,0);
   oled_display.print("m/s");
+  
   oled_display.setCursor(0,2);
   oled_display.print("Bike: ");
   oled_display.print(TachoSpeed);
   oled_display.setCursor(11,2);
   oled_display.print("m/s");
+
+  oled_display.setCursor(0,4);
+  oled_display.print("GPS: ");
+  oled_display.print(fix.speed_kph());
+  oled_display.setCursor(10,4);
+  oled_display.print("km/h");
   
   delay(1000); // delay for stability
 }
