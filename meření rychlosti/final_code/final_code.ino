@@ -36,6 +36,8 @@ float TachoSpeed = 0;
 NMEAGPS  gps; // This parses the GPS characters
 gps_fix  fix; // This holds on to the latest values
 
+float GPSpeed = (fix.speed_kph()/(3,6));
+
 
 // setup and calculate offset
 void setup() {
@@ -98,8 +100,8 @@ void loop() {
     fix = gps.read();
 
    Serial.print(F("SPEED: "));
-    if (fix.valid.speed)
-      Serial.println(fix.speed_kph());
+    if (fix.valid.speed);
+      //Serial.println(fix.speed_kph());
 }
 
   
@@ -119,9 +121,9 @@ void loop() {
 
   oled_display.setCursor(0,4);
   oled_display.print("GPS: ");
-  oled_display.print(fix.speed_kph());
+  oled_display.print(GPSpeed); //definováno pomocí float nahoře
   oled_display.setCursor(10,4);
-  oled_display.print("km/h");
+  oled_display.print("m/s");
   
   delay(1000); // delay for stability
 }
