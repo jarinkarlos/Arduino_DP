@@ -1,3 +1,9 @@
+/*co je potřeba udělat:
+  GPS: -záznam o poloze
+       -záznam o času
+  SD-karta - přidat záznam na SD kartu
+     
+*/
 
 //nastavení displaye
 #include <Arduino.h>
@@ -64,6 +70,18 @@ void setup() {
 
 
 void loop() {
+
+//GPS
+  while (gps.available(gpsPort)) {
+    fix = gps.read();
+
+   Serial.print("GPSeed: ");
+    if (fix.valid.speed);
+      //Serial.println(fix.speed_kph());
+   Serial.print(GPSpeed);
+   Serial.print(", ");
+}
+
   
 // pitotova trubice:
   float adc_avg = 0; float veloc = 0.0;
@@ -83,8 +101,9 @@ void loop() {
       veloc = sqrt((10000.0*((adc_avg/1023.0)-0.5))/rho);
     }
   }
-  Serial.print("PitSpeed:");
-  Serial.println(veloc); // print velocity
+  Serial.print("PitSpeed: ");
+  Serial.print(veloc); // print velocity
+  Serial.print(", ");
   
 
 //tachometr:
@@ -95,14 +114,7 @@ void loop() {
   else TachoSpeed = 3000/(float)pulseTime;
   Serial.println(TachoSpeed);
 
-//GPS
-  while (gps.available(gpsPort)) {
-    fix = gps.read();
 
-   Serial.print(F("SPEED: "));
-    if (fix.valid.speed);
-      //Serial.println(fix.speed_kph());
-}
 
   
 //display print
