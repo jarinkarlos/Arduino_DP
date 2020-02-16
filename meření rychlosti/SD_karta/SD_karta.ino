@@ -10,8 +10,6 @@ File Slozka;
 int const pinSS = 10;
 int const pinCS = 4;
 
-long int Time;
-
 
 void setup()
 {
@@ -32,14 +30,12 @@ void setup()
 
 void loop()
 {
-  Time = millis;
   Slozka = SD.open("test.txt", FILE_WRITE);       // soubor, který chceme otevřít a psát do něj (FILE_WRITE) se jmenuje test.txt (popřípadě vložte celou cestu k souboru)
 
   // pokud se soubor načte a otevře, tak:
   if (Slozka)
   {
     // zapiš do souboru
-    Slozka.println(Time);   //zaznamenáví časovou značku, ale asi by tam šlo dát "časové razítko" jako v serial monitoru
     Slozka.print("Air:");
     Slozka.println(veloc);
     Slozka.print("Bike:");
