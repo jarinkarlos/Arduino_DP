@@ -4,6 +4,13 @@
   SD-karta - přidat záznam na SD kartu
      
 */
+/*Zapojení
+ * display: SCL - A5; SDA - A4;
+ * karta: CS - 4; SCK - 13; MOSI - 11; MISO - 12;
+ * GPS: TXD - 8; RXD - 9;
+ * hall: OUT - 3;
+ * pitotka: ANALOG - A0;
+ */
 
 //nastavení displaye
 #include <Arduino.h>
@@ -11,6 +18,13 @@
  
 U8X8_SSD1306_128X64_NONAME_HW_I2C oled_display(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
 
+//nastavení SD_karty
+//#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+int const pinSS = 10;
+int const pinCS = 4;
+File zapisDat;
 
 //pitotova trubice:
 float V_0 = 5.0; // supply voltage to the pressure sensor
@@ -53,6 +67,13 @@ void setup() {
   oled_display.begin();
   oled_display.setPowerSave(0);
   oled_display.setFont(u8x8_font_chroma48medium8_r);
+
+//SD_karta
+   pinMode(pinSS, OUTPUT); //pin se nepoužívá, ale přesto musí být nastaven jako OUTPUT
+   if (!SD.begin(pinCS)) {  // kontrola připojené SD karty
+    Serial.println("SD karta neni pripojena nebo je vadna!");
+    return;
+  }
 
 //pitotova trubice
   for (int ii=0;ii<offset_size;ii++){
@@ -114,6 +135,29 @@ void loop() {
   else TachoSpeed = 3000/(float)pulseTime;
   Serial.println(TachoSpeed);
 
+
+//SD_karta
+// vytvoření proměnné dataString pro uložení
+  // zprávy, která bude zapsána na SD kartu
+  String dataString = "Air: ";
+  // načtení analogové hodnoty z nastaveného pinu
+  int TachoSpeed = 3000/(float)pulseTime;
+  // připsání hodnoty z pinu do zprávy dataString
+  dataString += String(TachoSpeed);
+  // otevření souboru na SD kartě s názvem mereni.txt
+  zapisDat = SD.open("mereni.txt", FILE_WRITE);
+
+  // v případě, že je soubor bez problémů vytvořen (pokud neexistuje),
+  // nebo otevřen (pokud existuje), zapiš do něj dataString a ukonči zápis
+  if (zapisDat) {
+    zapisDat.println(dataString);
+    zapisDat.close();
+    Serial.println("Zapis na kartu uspesny.");
+  }
+  // v případě chyby při otevírání souboru vypiš chybu
+  else {
+    Serial.println("Chyba pri otevreni souboru mereni.txt !");
+  }
 
 
   
