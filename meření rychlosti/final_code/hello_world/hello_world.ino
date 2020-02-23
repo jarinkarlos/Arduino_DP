@@ -3,10 +3,12 @@
 #include <SD.h>
 #include <NMEAGPS.h>
 #include <GPSport.h>
-//#include <Arduino.h>
-//#include <U8x8lib.h>
+#include "SSD1306Ascii.h"
+#include "SSD1306AsciiAvrI2c.h"
+#define I2C_ADDRESS 0x3C
  
-/*U8X8_SSD1306_128X64_NONAME_HW_I2C oled_display(/* clock=*/ //SCL, /* data=*/ //SDA, /* reset=*/ //U8X8_PIN_NONE);
+//display
+SSD1306AsciiAvrI2c oled;
 
 //SD karta
 const int chipSelect = 4;
@@ -39,7 +41,7 @@ gps_fix  fix; // This holds on to the latest values
 float GPSpeed = 0;
 
 void setup() {
-  Serial.begin(9600);
+ Serial.begin(9600);
  
 //SDkarta
   while (!Serial) {
@@ -67,12 +69,10 @@ void setup() {
 //GPS
   gpsPort.begin(9600);
 
-/*
 //display
-  oled_display.begin();
-  oled_display.setPowerSave(0);
-  oled_display.setFont(u8x8_font_chroma48medium8_r);
-*/
+  oled.begin(&Adafruit128x64, I2C_ADDRESS);
+  oled.setFont(TimesNewRoman16);
+  
 }
 
 void loop() {
@@ -119,7 +119,7 @@ void loop() {
   Serial.println(TachoSpeed);
 
 //SD karta
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+  File dataFile = SD.open("test.txt", FILE_WRITE);
 
   if (dataFile) {
     dataFile.print(fix.dateTime.hours);
@@ -144,9 +144,9 @@ void loop() {
   else {
     Serial.println("error opening datalog.txt");
   }
-
+/*
   Serial.println("čtení ze souboru");
-  dataFile = SD.open("datalog.txt");
+  dataFile = SD.open("test.txt");
   if (dataFile)
   {
     Serial.println("soubor obsahuje: ");
@@ -164,28 +164,21 @@ void loop() {
   {
     Serial.println("soubor se nepodarilo otevrit");
   }
-/*
-//display print
-  oled_display.clear();
-  oled_display.setCursor(0,0);
-  oled_display.print("Air: ");
-  oled_display.print(veloc);
-  oled_display.setCursor(10,0);
-  oled_display.print("m/s");
-  
-  oled_display.setCursor(0,2);
-  oled_display.print("Bike: ");
-  oled_display.print(TachoSpeed);
-  oled_display.setCursor(11,2);
-  oled_display.print("m/s");
-
-  oled_display.setCursor(0,4);
-  oled_display.print("GPS: ");
-  oled_display.print(GPSpeed); //definováno pomocí float nahoře
-  oled_display.setCursor(10,4);
-  oled_display.print("m/s");
 */
-  delay(5000);
+
+//display print
+  oled.clear();
+  oled.print("P: ");
+  oled.println(veloc);
+  //oled.println(" mps");
+  oled.print("T: ");
+  oled.println(TachoSpeed);
+  //oled.println(" mps");
+  oled.print("G: ");
+  oled.println(GPSpeed); //definováno pomocí float nahoře
+  //oled.println(" mps");
+
+  delay(100);
 }
 
 void UpdatePulseTime() {
