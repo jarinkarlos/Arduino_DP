@@ -61,18 +61,21 @@ void setup() {
     offset += analogRead(A0)-(1023/2);
   }
   offset /= offset_size;
-
+  Serial.print("AhojPit");
+  
 //tachometr:
   pinMode(interruptPin, INPUT_PULLUP); // dokud neni tlacitko zmacknute bude pin ve stavu HIGH viz https://arduino.cz/arduino-zaklady-funkce-input_pullup/
   attachInterrupt(digitalPinToInterrupt(interruptPin), UpdatePulseTime, FALLING); // nastavime preruseni na pin 3, bude reagovat na klesajici napeti a bude volat funkci UpdatePulseTime
+  Serial.print("AhojTacho");
 
 //GPS
   gpsPort.begin(9600);
-
+  Serial.print("AhojGPS");
+  
 //display
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
   oled.setFont(TimesNewRoman16);
-  
+  Serial.print("AhojDis");
 }
 
 void loop() {
@@ -80,7 +83,7 @@ void loop() {
 //GPS
   while (gps.available(gpsPort)) {
     fix = gps.read();
-    GPSpeed = (fix.speed_kph()/(3,6));
+    GPSpeed = fix.speed_kph()/3,6;
     Serial.print("GPSeed: ");
     if (fix.valid.speed);
     //Serial.println(fix.speed_kph());

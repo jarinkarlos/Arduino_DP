@@ -1,0 +1,21 @@
+SD modul
+	CS - 4
+	SCK - 13
+	MOSI - 11
+	MISO - 12
+	VCC - 5V
+	GND - GND
+GPS
+	GND - GND
+	VCC - 5V
+	TXD - 8
+	RXD - 9
+HALL
+	
+	OUT - 3
+PIT
+	ANALOG - A0
+
+DISPLAY
+	SCL - A5
+	SDA - A4
