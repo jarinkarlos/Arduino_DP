@@ -122,7 +122,7 @@ void loop() {
   Serial.println(TachoSpeed);
 
 //SD karta
-  File dataFile = SD.open("test.txt", FILE_WRITE);
+  File dataFile = SD.open("kal.csv", FILE_WRITE);
 
   if (dataFile) {
     dataFile.print(fix.dateTime.hours);
